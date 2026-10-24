@@ -145,7 +145,10 @@ class Connection:
 
     def _execute_fetchall(self, sql: str, parameters: Any) -> Iterable[sqlite3.Row]:
         cursor = self._conn.execute(sql, parameters)
-        return cursor.fetchall()
+        try:
+            return cursor.fetchall()
+        finally:
+            cursor.close()
 
     async def _execute(self, fn, *args, **kwargs):
         """Queue a function with the given arguments for execution."""
@@ -236,7 +239,7 @@ class Connection:
     async def execute_fetchall(
         self, sql: str, parameters: Optional[Iterable[Any]] = None
     ) -> Iterable[sqlite3.Row]:
-        """Helper to execute a query and return all the data."""
+        """Execute a query, return all the data, and close the temporary cursor."""
         if parameters is None:
             parameters = []
         return await self._execute(self._execute_fetchall, sql, parameters)

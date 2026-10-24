@@ -41,6 +41,11 @@ It can also be used in the traditional, procedural manner:
     await cursor.close()
     await db.close()
 
+The ``Connection.execute_fetchall()`` helper executes a query, fetches all rows,
+and closes its temporary cursor in a single worker operation. The cursor is also
+closed if fetching raises an exception. If closing fails, that exception is
+raised with any fetch exception retained as its context.
+
 aiosqlite also replicates most of the advanced features of ``sqlite3``:
 
 .. code-block:: python
